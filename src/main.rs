@@ -4,6 +4,7 @@ use std::io::BufWriter;
 use image::{ImageBuffer, Rgba};
 use image::DynamicImage::ImageRgba8;
 use image::ImageFormat::Png;
+use crate::dom::{Element, NodeId};
 use crate::parsing::HTMLParser;
 use crate::rendering::paint;
 

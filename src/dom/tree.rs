@@ -5,11 +5,11 @@ use crate::dom::{Document, Element};
 pub struct NodeId(NonZeroUsize);
 
 impl NodeId {
-    fn to_index(&self) -> usize {
+    pub fn to_index(&self) -> usize {
         self.0.get() - 1
     }
 
-    fn from_index(i: usize) -> Self {
+    pub fn from_index(i: usize) -> Self {
         NodeId(NonZeroUsize::new(i + 1).unwrap())
     }
 }

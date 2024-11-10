@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::dom::{Document, Element, NodeMut, Tree};
 use crate::parsing::Parse;
 
@@ -50,9 +51,10 @@ impl Parser {
     fn parse_element<'a, 'b>(&mut self, parent: &'b mut NodeMut<'a>) -> NodeMut<'b> {
         self.expect("<");
         let tag_name = self.parse_name();
+        let attributes = self.parse_attributes();
         self.expect(">");
 
-        let mut parent = parent.append(Element::from_tag_name(&*tag_name));
+        let mut parent = parent.append(Element::from_tag_name(&*tag_name, attributes));
         self.parse_nodes(&mut parent);
 
         self.expect("</");
@@ -60,7 +62,37 @@ impl Parser {
         self.expect(">");
 
         parent
+    }
 
+    fn parse_attributes(&mut self) -> HashMap<String, String> {
+        let mut attributes = HashMap::new();
+        loop {
+            self.consume_whitespace();
+            if self.next_char() == '>' {
+                break;
+            }
+
+            let (name, value) = self.parse_attr();
+            attributes.insert(name, value);
+        }
+
+        attributes
+    }
+
+    fn parse_attr(&mut self) -> (String, String) {
+        let name = self.parse_name();
+        self.expect("=");
+        let value = self.parse_attr_value();
+        (name, value)
+    }
+
+    fn parse_attr_value(&mut self) -> String {
+        let open_quote = self.consume_char();
+        assert!(open_quote == '"' || open_quote == '\'');
+        let value = self.consume_while(|c| c != open_quote);
+        let close_quote = self.consume_char();
+        assert_eq!(close_quote, open_quote);
+        value
     }
 }
 
