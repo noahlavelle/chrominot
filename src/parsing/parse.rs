@@ -1,3 +1,5 @@
+use crate::dom::Element;
+
 pub trait Parse {
     fn input(&self) -> &str;
     fn cursor(&self) -> usize;

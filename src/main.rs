@@ -1,8 +1,10 @@
+use std::fs;
 use std::fs::File;
 use std::io::BufWriter;
 use image::{ImageBuffer, Rgba};
 use image::DynamicImage::ImageRgba8;
 use image::ImageFormat::Png;
+use crate::parsing::HTMLParser;
 use crate::rendering::paint;
 
 mod rendering;
@@ -10,13 +12,18 @@ mod dom;
 mod parsing;
 
 fn main() {
-    let filename = "output.png";
-    let mut file = BufWriter::new(File::create(&filename).unwrap());
-    if write_to_output(&mut file) {
-        println!("Successfully wrote to {}", filename);
-    } else {
-        println!("Error writing to {}", filename);
-    }
+    let source= fs::read_to_string("resources/test.html").unwrap();
+    let tree = HTMLParser::new(source).create_parsed_tree();
+
+    println!("Parsed tree");
+
+    // let filename = "output.png";
+    // let mut file = BufWriter::new(File::create(&filename).unwrap());
+    // if write_to_output(&mut file) {
+    //     println!("Successfully wrote to {}", filename);
+    // } else {
+    //     println!("Error writing to {}", filename);
+    // }
 }
 
 fn write_to_output(file: &mut BufWriter<File>) -> bool {
